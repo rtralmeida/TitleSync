@@ -16,10 +16,12 @@ namespace TitleSync
     public partial class FormMain : MaterialForm
     {
         private StringBuilder m_Sb;
+        private FileSystemWatcher m_Watcher;
         private bool m_bDirty;
-        private System.IO.FileSystemWatcher m_Watcher;
+        private string songTitle;
         private bool m_bIsWatching;
         private string _fileName;
+
 
         public FormMain()
         {
@@ -27,9 +29,8 @@ namespace TitleSync
             var materialSkinManager = MaterialSkinManager.Instance;
             materialSkinManager.AddFormToManage(this);
             materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
-            materialSkinManager.ColorScheme = new ColorScheme(Primary.Indigo500, Primary.Indigo700, Primary.Indigo200, Accent.Pink200, TextShade.WHITE);
-
-            //materialSkinManager.ColorScheme = new ColorScheme(Primary.BlueGrey800, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE);
+            materialSkinManager.ColorScheme = new ColorScheme(Primary.BlueGrey800, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE);
+            //materialSkinManager.ColorScheme = new ColorScheme(Primary.Indigo500, Primary.Indigo700, Primary.Indigo200, Accent.Pink200, TextShade.WHITE);
 
 
             m_Sb = new StringBuilder();
@@ -43,18 +44,17 @@ namespace TitleSync
             if (m_bIsWatching)
             {
                 btnBrowseFile.Enabled = true;
-
                 m_bIsWatching = false;
                 btnWatchFile.BackColor = Color.Red;
                 m_Watcher.EnableRaisingEvents = false;
                 m_Watcher.Dispose();
-                btnWatchFile.Text = "Start Watching";
+                btnWatchFile.Text = "CONNECT";
             }
             else
             {
                 m_bIsWatching = true;
                 btnBrowseFile.Enabled = false;
-                btnWatchFile.Text = "Stop Watching";
+                btnWatchFile.Text = "Stop";
 
                 m_Watcher = new FileSystemWatcher();
 
@@ -87,6 +87,7 @@ namespace TitleSync
                 m_Sb.Append(" - ");
                 m_Sb.Append(response);
                 m_bDirty = true;
+                ReadFile(_fileName);
             }
         }
 
@@ -113,44 +114,40 @@ namespace TitleSync
                 txtFileContent.Text = "";
                 _fileName = dlgOpenFile.FileName;
                 txtFile.Text = _fileName;
-                FillTxtFileContent();
+                ReadFile(_fileName);
+
             }
         }
-
-        private void FillTxtFileContent()
-        {
-
-            using (StreamReader fileContents = ReadFile(_fileName))
-            {
-                string line;
-                while ((line = fileContents.ReadLine()) != null)
-                {
-                    txtFileContent.AppendText(line);
-                }
-            }
-
-        }
+ 
 
         private string MakeRequest()
         {
-
-            return "amazing";
-            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create(txtUrl.Text);
-            //request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-            //using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            //using (Stream stream = response.GetResponseStream())
-            //using (StreamReader reader = new StreamReader(stream))
-            //{
-            //    return reader.ReadToEnd();
-            //}
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(txtUrl.Text + songTitle);
+            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            using (Stream stream = response.GetResponseStream())
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
 
         }
 
-        private StreamReader ReadFile(string fileName)
+        private void ReadFile(string fileName)
         {
+            txtFileContent.Clear();
+            StringBuilder content = new StringBuilder();
+            using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) // prevent error already used by another proccess
+            using (var reader = new StreamReader(fs))
+            {
+                string line;
 
-            StreamReader file = new StreamReader(@fileName);
-            return file;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    content.AppendLine(line);
+                }
+            }
+            txtFileContent.AppendText(content.ToString());
         }
         private void FormMain_Resize(object sender, EventArgs e)
         {

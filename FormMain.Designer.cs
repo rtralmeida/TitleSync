@@ -38,7 +38,6 @@ namespace TitleSync
             this.NotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnWatchFile = new MaterialSkin.Controls.MaterialRaisedButton();
             this.txtUrl = new MaterialSkin.Controls.MaterialSingleLineTextField();
             this.btnBrowseFile = new MaterialSkin.Controls.MaterialRaisedButton();
             this.materialLabel2 = new MaterialSkin.Controls.MaterialLabel();
@@ -46,6 +45,7 @@ namespace TitleSync
             this.txtFile = new MaterialSkin.Controls.MaterialSingleLineTextField();
             this.lstNotification = new System.Windows.Forms.ListBox();
             this.txtFileContent = new System.Windows.Forms.RichTextBox();
+            this.btnWatchFile = new MaterialSkin.Controls.MaterialRaisedButton();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -53,7 +53,7 @@ namespace TitleSync
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(9, 361);
+            this.label3.Location = new System.Drawing.Point(12, 527);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(125, 13);
             this.label3.TabIndex = 6;
@@ -87,23 +87,6 @@ namespace TitleSync
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
-            // btnWatchFile
-            // 
-            this.btnWatchFile.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.btnWatchFile.AutoSize = true;
-            this.btnWatchFile.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnWatchFile.Depth = 0;
-            this.btnWatchFile.Icon = null;
-            this.btnWatchFile.Location = new System.Drawing.Point(290, 652);
-            this.btnWatchFile.MouseState = MaterialSkin.MouseState.HOVER;
-            this.btnWatchFile.Name = "btnWatchFile";
-            this.btnWatchFile.Primary = true;
-            this.btnWatchFile.Size = new System.Drawing.Size(138, 36);
-            this.btnWatchFile.TabIndex = 3;
-            this.btnWatchFile.Text = "START WATCHING";
-            this.btnWatchFile.UseVisualStyleBackColor = true;
-            this.btnWatchFile.Click += new System.EventHandler(this.BtnWatchFile_Click);
-            // 
             // txtUrl
             // 
             this.txtUrl.Depth = 0;
@@ -120,7 +103,7 @@ namespace TitleSync
             this.txtUrl.Size = new System.Drawing.Size(331, 23);
             this.txtUrl.TabIndex = 2;
             this.txtUrl.TabStop = false;
-            this.txtUrl.Text = "http://azfm.com.test/triger.php?song=songName";
+            this.txtUrl.Text = "http://azfm.com.test/triger.php?song=";
             this.txtUrl.UseSystemPasswordChar = false;
             // 
             // btnBrowseFile
@@ -130,7 +113,7 @@ namespace TitleSync
             this.btnBrowseFile.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.btnBrowseFile.Depth = 0;
             this.btnBrowseFile.Icon = null;
-            this.btnBrowseFile.Location = new System.Drawing.Point(352, 123);
+            this.btnBrowseFile.Location = new System.Drawing.Point(399, 113);
             this.btnBrowseFile.MouseState = MaterialSkin.MouseState.HOVER;
             this.btnBrowseFile.Name = "btnBrowseFile";
             this.btnBrowseFile.Primary = true;
@@ -188,7 +171,7 @@ namespace TitleSync
             // lstNotification
             // 
             this.lstNotification.FormattingEnabled = true;
-            this.lstNotification.Location = new System.Drawing.Point(12, 377);
+            this.lstNotification.Location = new System.Drawing.Point(12, 543);
             this.lstNotification.Name = "lstNotification";
             this.lstNotification.Size = new System.Drawing.Size(416, 173);
             this.lstNotification.TabIndex = 17;
@@ -197,15 +180,28 @@ namespace TitleSync
             // 
             this.txtFileContent.Location = new System.Drawing.Point(13, 165);
             this.txtFileContent.Name = "txtFileContent";
-            this.txtFileContent.Size = new System.Drawing.Size(415, 96);
+            this.txtFileContent.Size = new System.Drawing.Size(415, 92);
             this.txtFileContent.TabIndex = 18;
             this.txtFileContent.Text = "";
+            // 
+            // btnWatchFile
+            // 
+            this.btnWatchFile.Location = new System.Drawing.Point(391, 408);
+            this.btnWatchFile.MouseState = MaterialSkin.MouseState.HOVER;
+            this.btnWatchFile.Name = "btnWatchFile";
+            this.btnWatchFile.Primary = true;
+            this.btnWatchFile.Size = new System.Drawing.Size(84, 36);
+            this.btnWatchFile.TabIndex = 4;
+            this.btnWatchFile.Text = "CONNECT";
+            this.btnWatchFile.UseVisualStyleBackColor = true;
+            this.btnWatchFile.Click += new System.EventHandler(this.BtnWatchFile_Click);
             // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(448, 756);
+            this.ClientSize = new System.Drawing.Size(495, 737);
+            this.Controls.Add(this.btnWatchFile);
             this.Controls.Add(this.txtFileContent);
             this.Controls.Add(this.lstNotification);
             this.Controls.Add(this.materialLabel1);
@@ -213,7 +209,6 @@ namespace TitleSync
             this.Controls.Add(this.btnBrowseFile);
             this.Controls.Add(this.txtFile);
             this.Controls.Add(this.txtUrl);
-            this.Controls.Add(this.btnWatchFile);
             this.Controls.Add(this.label3);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
@@ -232,7 +227,6 @@ namespace TitleSync
         private System.Windows.Forms.NotifyIcon NotifyIcon;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private MaterialSkin.Controls.MaterialRaisedButton btnWatchFile;
         private MaterialSkin.Controls.MaterialSingleLineTextField txtUrl;
         private MaterialSkin.Controls.MaterialRaisedButton btnBrowseFile;
         private MaterialLabel materialLabel2;
@@ -240,6 +234,7 @@ namespace TitleSync
         private MaterialSingleLineTextField txtFile;
         private System.Windows.Forms.ListBox lstNotification;
         private System.Windows.Forms.RichTextBox txtFileContent;
+        private MaterialRaisedButton btnWatchFile;
     }
 }
 
