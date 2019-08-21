@@ -1,113 +1,37 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using System.IO;
 using System.Net;
-using MaterialSkin.Controls;
-using MaterialSkin;
-using System.Threading.Tasks;
+using System.Text;
+using System.Windows.Forms;
 
 namespace TitleSync
 {
-    public partial class FormMain : MaterialForm
+    public partial class FormMain : Form
     {
         private StringBuilder m_Sb;
-        private FileSystemWatcher m_Watcher;
+        private FileSystemWatcher fsWatcher;
         private bool m_bDirty;
-        private string songTitle;
+        private string _songTitle;
         private bool m_bIsWatching;
         private string _fileName;
+        private string _fullUrl;
 
 
         public FormMain()
         {
             InitializeComponent();
-            var materialSkinManager = MaterialSkinManager.Instance;
-            materialSkinManager.AddFormToManage(this);
-            materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
-            materialSkinManager.ColorScheme = new ColorScheme(Primary.BlueGrey800, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE);
-            //materialSkinManager.ColorScheme = new ColorScheme(Primary.Indigo500, Primary.Indigo700, Primary.Indigo200, Accent.Pink200, TextShade.WHITE);
-
-
             m_Sb = new StringBuilder();
             m_bDirty = false;
             m_bIsWatching = false;
-        }
+            _fileName = txtFile.Text;
 
-        private void BtnWatchFile_Click(object sender, EventArgs e)
-        {
-
-            if (m_bIsWatching)
-            {
-                btnBrowseFile.Enabled = true;
-                m_bIsWatching = false;
-                btnWatchFile.BackColor = Color.Red;
-                m_Watcher.EnableRaisingEvents = false;
-                m_Watcher.Dispose();
-                btnWatchFile.Text = "CONNECT";
-            }
-            else
-            {
-                m_bIsWatching = true;
-                btnBrowseFile.Enabled = false;
-                btnWatchFile.Text = "Stop";
-
-                m_Watcher = new FileSystemWatcher();
-
-                m_Watcher.Filter = txtFile.Text.Substring(txtFile.Text.LastIndexOf('\\') + 1);
-                m_Watcher.Path = txtFile.Text.Substring(0, txtFile.Text.Length - m_Watcher.Filter.Length);
-
-                m_Watcher.NotifyFilter = NotifyFilters.LastWrite;
-                //m_Watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-                m_Watcher.Changed += new FileSystemEventHandler(OnChanged);
-                //m_Watcher.Created += new FileSystemEventHandler(OnChanged);
-                //m_Watcher.Deleted += new FileSystemEventHandler(OnChanged);
-                //m_Watcher.Renamed += new RenamedEventHandler(OnRenamed);
-                m_Watcher.EnableRaisingEvents = true;
-
-            }
-
-        }
-
-        private void OnChanged(object sender, FileSystemEventArgs e)
-        {
-            if (!m_bDirty)
-            {
-                var response = MakeRequest();
-                m_Sb.Clear();
-                m_Sb.Append(e.Name);
-                m_Sb.Append(" ");
-                m_Sb.Append(e.ChangeType.ToString());
-                //m_Sb.Append(" - ");
-                m_Sb.Append(DateTime.Now.ToString("HH:mm:ss"));
-                m_Sb.Append(" - ");
-                m_Sb.Append(response);
-                m_bDirty = true;
-                ReadFile(_fileName);
-            }
-        }
-
-        private void tmrEditNotify_Tick(object sender, EventArgs e)
-        {
-            if (m_bDirty)
-            {
-                m_bDirty = false;
-                lstNotification.BeginUpdate();
-                lstNotification.Items.Add(m_Sb.ToString());
-                lstNotification.EndUpdate();
-            }
+            _fullUrl = txtUrl.Text;
         }
 
         private void btnBrowseFile_Click(object sender, EventArgs e)
         {
-
             btnBrowseFile.Enabled = true;
-
-
             DialogResult resDialog = dlgOpenFile.ShowDialog();
             if (resDialog.ToString() == "OK")
             {
@@ -115,23 +39,59 @@ namespace TitleSync
                 _fileName = dlgOpenFile.FileName;
                 txtFile.Text = _fileName;
                 ReadFile(_fileName);
-
             }
         }
- 
 
-        private string MakeRequest()
+
+        private void BtnConnect_Click(object sender, EventArgs e)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(txtUrl.Text + songTitle);
-            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            using (Stream stream = response.GetResponseStream())
-            using (StreamReader reader = new StreamReader(stream))
+            if (!m_bIsWatching)
             {
-                return reader.ReadToEnd();
+                btnBrowseFile.Enabled = false;
+                m_bIsWatching = true;
+                btnWatchFile.BackColor = Color.Red;
+                btnWatchFile.Text = "Stop";
+                fsWatcher = new FileSystemWatcher
+                {
+                    Path = Path.GetDirectoryName(txtFile.Text),
+                    Filter = Path.GetFileName(txtFile.Text),
+                    NotifyFilter = NotifyFilters.LastWrite
+                };
+                fsWatcher.Changed += new FileSystemEventHandler(OnChanged);
+                fsWatcher.EnableRaisingEvents = true;
             }
-
+            else
+            {
+                btnBrowseFile.Enabled = true;
+                btnWatchFile.BackColor = Color.LimeGreen;
+                btnWatchFile.Text = "CONNECT";
+                m_bIsWatching = false;
+            }
         }
+
+        private void OnChanged(object sender, FileSystemEventArgs e)
+        {
+            if (!m_bDirty)
+            {
+                ReadFile(_fileName);
+                var response = MakeRequest();
+                m_Sb.Clear();
+                m_Sb.Append(e.Name);
+                m_Sb.Append(" ");
+                m_Sb.Append(e.ChangeType.ToString());
+                m_Sb.Append(DateTime.Now.ToString("HH:mm:ss"));
+                m_Sb.Append(" - ");
+                m_Sb.Append(response);
+                m_bDirty = true;
+                lstNotification.Items.Add(m_Sb.ToString());
+                m_bDirty = true;
+            }
+            else
+            {
+                m_bDirty = false;
+            }
+        }
+
 
         private void ReadFile(string fileName)
         {
@@ -141,17 +101,42 @@ namespace TitleSync
             using (var reader = new StreamReader(fs))
             {
                 string line;
-
                 while ((line = reader.ReadLine()) != null)
                 {
                     content.AppendLine(line);
+                    _songTitle = line;
                 }
             }
             txtFileContent.AppendText(content.ToString());
+
+            _fullUrl = txtUrl.Text + _songTitle;
+
+            lblFullUrl.Text = txtUrl.Text + _songTitle;
+
         }
-        private void FormMain_Resize(object sender, EventArgs e)
+
+
+        private void WriteFile(string text, string fileName = "token.txt")
         {
 
+            File.WriteAllText(Application.StartupPath.ToString() + "\\" + @fileName, text);
+
+        }
+
+        private string MakeRequest()
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(_fullUrl);
+            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            using (Stream stream = response.GetResponseStream())
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+
+        private void FormMain_Resize(object sender, EventArgs e)
+        {
             if (this.WindowState == FormWindowState.Minimized)
             {
                 Hide();
@@ -160,7 +145,6 @@ namespace TitleSync
                 NotifyIcon.ShowBalloonTip(500);
             }
         }
-
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -171,11 +155,13 @@ namespace TitleSync
         {
             Show();
             this.WindowState = FormWindowState.Normal;
-            //NotifyIcon.Visible = false;
-            //NotifyIcon.ShowBalloonTip(1000);
-
         }
 
+        private void TokenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string token = Prompt.ShowDialog("Insert Authentication Token", "");
+            WriteFile(token);
 
+        }
     }
 }
