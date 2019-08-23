@@ -36,7 +36,7 @@ namespace TitleSync
             this.NotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.txtUrl = new System.Windows.Forms.TextBox();
+            this.txEndpointUrl = new System.Windows.Forms.TextBox();
             this.btnBrowseFile = new System.Windows.Forms.Button();
             this.materialLabel2 = new System.Windows.Forms.Label();
             this.materialLabel1 = new System.Windows.Forms.Label();
@@ -48,6 +48,7 @@ namespace TitleSync
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tokenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -89,15 +90,15 @@ namespace TitleSync
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
-            // txtUrl
+            // txEndpointUrl
             // 
-            this.txtUrl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.txtUrl.Location = new System.Drawing.Point(49, 321);
-            this.txtUrl.Name = "txtUrl";
-            this.txtUrl.Size = new System.Drawing.Size(425, 26);
-            this.txtUrl.TabIndex = 2;
-            this.txtUrl.TabStop = false;
-            this.txtUrl.Text = "http://azfm.com.test/triger.php?song=";
+            this.txEndpointUrl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.txEndpointUrl.Location = new System.Drawing.Point(49, 321);
+            this.txEndpointUrl.Name = "txEndpointUrl";
+            this.txEndpointUrl.Size = new System.Drawing.Size(425, 26);
+            this.txEndpointUrl.TabIndex = 2;
+            this.txEndpointUrl.TabStop = false;
+            this.txEndpointUrl.TextChanged += new System.EventHandler(this.TxtEndpointUrl_TextChanged);
             // 
             // btnBrowseFile
             // 
@@ -110,7 +111,7 @@ namespace TitleSync
             this.btnBrowseFile.TabIndex = 1;
             this.btnBrowseFile.Text = "Browse";
             this.btnBrowseFile.UseVisualStyleBackColor = true;
-            this.btnBrowseFile.Click += new System.EventHandler(this.btnBrowseFile_Click);
+            this.btnBrowseFile.Click += new System.EventHandler(this.BtnBrowseFile_Click);
             // 
             // materialLabel2
             // 
@@ -146,6 +147,7 @@ namespace TitleSync
             // lstNotification
             // 
             this.lstNotification.FormattingEnabled = true;
+            this.lstNotification.HorizontalScrollbar = true;
             this.lstNotification.Location = new System.Drawing.Point(58, 503);
             this.lstNotification.Name = "lstNotification";
             this.lstNotification.Size = new System.Drawing.Size(425, 160);
@@ -154,7 +156,7 @@ namespace TitleSync
             // txtFileContent
             // 
             this.txtFileContent.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtFileContent.Location = new System.Drawing.Point(48, 99);
+            this.txtFileContent.Location = new System.Drawing.Point(48, 107);
             this.txtFileContent.Name = "txtFileContent";
             this.txtFileContent.Size = new System.Drawing.Size(426, 168);
             this.txtFileContent.TabIndex = 18;
@@ -166,7 +168,7 @@ namespace TitleSync
             this.btnWatchFile.BackColor = System.Drawing.Color.LimeGreen;
             this.btnWatchFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
             this.btnWatchFile.ForeColor = System.Drawing.SystemColors.Menu;
-            this.btnWatchFile.Location = new System.Drawing.Point(209, 399);
+            this.btnWatchFile.Location = new System.Drawing.Point(191, 402);
             this.btnWatchFile.MinimumSize = new System.Drawing.Size(100, 60);
             this.btnWatchFile.Name = "btnWatchFile";
             this.btnWatchFile.Size = new System.Drawing.Size(147, 60);
@@ -206,9 +208,16 @@ namespace TitleSync
             // tokenToolStripMenuItem
             // 
             this.tokenToolStripMenuItem.Name = "tokenToolStripMenuItem";
-            this.tokenToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.tokenToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
             this.tokenToolStripMenuItem.Text = "Token";
             this.tokenToolStripMenuItem.Click += new System.EventHandler(this.TokenToolStripMenuItem_Click);
+            // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "checkmark.ico");
+            this.imageList1.Images.SetKeyName(1, "close.ico");
             // 
             // FormMain
             // 
@@ -224,12 +233,13 @@ namespace TitleSync
             this.Controls.Add(this.btnBrowseFile);
             this.Controls.Add(this.txtFile);
             this.Controls.Add(this.lblFullUrl);
-            this.Controls.Add(this.txtUrl);
+            this.Controls.Add(this.txEndpointUrl);
             this.Controls.Add(this.label3);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "FormMain";
             this.Text = "TitleSync";
+            this.Load += new System.EventHandler(this.FormMain_Load);
             this.Resize += new System.EventHandler(this.FormMain_Resize);
             this.contextMenuStrip1.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
@@ -246,7 +256,7 @@ namespace TitleSync
         private System.Windows.Forms.NotifyIcon NotifyIcon;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.TextBox txtUrl;
+        private System.Windows.Forms.TextBox txEndpointUrl;
         private System.Windows.Forms.Button btnBrowseFile;
         private System.Windows.Forms.Label materialLabel2;
         private System.Windows.Forms.Label materialLabel1;
@@ -258,6 +268,7 @@ namespace TitleSync
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tokenToolStripMenuItem;
+        private System.Windows.Forms.ImageList imageList1;
     }
 }
 

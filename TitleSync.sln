@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29209.62
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TitleSync", "TitleSync.csproj", "{CB30A76F-4C06-42B9-A853-12BA123AA84A}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Title Sync Setup", "Title Sync Setup\Title Sync Setup\Title Sync Setup.vdproj", "{988B85C1-F480-4885-B210-4DE8031BB039}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "TitleSyncSetup", "TitleSyncSetup\TitleSyncSetup.vdproj", "{636DDCAA-6816-4B65-B931-37F0760FAACA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,8 +17,8 @@ Global
 		{CB30A76F-4C06-42B9-A853-12BA123AA84A}.Debug|x86.Build.0 = Debug|x86
 		{CB30A76F-4C06-42B9-A853-12BA123AA84A}.Release|x86.ActiveCfg = Release|x86
 		{CB30A76F-4C06-42B9-A853-12BA123AA84A}.Release|x86.Build.0 = Release|x86
-		{988B85C1-F480-4885-B210-4DE8031BB039}.Debug|x86.ActiveCfg = Debug
-		{988B85C1-F480-4885-B210-4DE8031BB039}.Release|x86.ActiveCfg = Release
+		{636DDCAA-6816-4B65-B931-37F0760FAACA}.Debug|x86.ActiveCfg = Debug
+		{636DDCAA-6816-4B65-B931-37F0760FAACA}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
