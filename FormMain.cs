@@ -15,8 +15,7 @@ namespace TitleSync
         private bool m_bDirty;
         private bool m_bIsWatching;
         private string _fileName;
-
-
+        private string _token;
 
         public string FileName
         {
@@ -34,6 +33,7 @@ namespace TitleSync
             m_Sb = new StringBuilder();
             m_bDirty = false;
             m_bIsWatching = false;
+            _token = GetAppSetting("token");
             txEndpointUrl.Text = GetAppSetting("endpointUrl");
             FileName = GetAppSetting("lastPathFile");
 
@@ -62,20 +62,29 @@ namespace TitleSync
 
             if (!m_bIsWatching)
             {
-                lstNotification.Items.Clear();
-                btnBrowseFile.Enabled = false;
-                m_bIsWatching = true;
-                btnWatchFile.BackColor = Color.Red;
-                btnWatchFile.Text = "Stop";
-                ReadFileAndMakeRequest();
-                fsWatcher = new FileSystemWatcher
+
+                try
                 {
-                    Path = Path.GetDirectoryName(txtFile.Text),
-                    Filter = Path.GetFileName(txtFile.Text),
-                    NotifyFilter = NotifyFilters.LastWrite
-                };
-                fsWatcher.Changed += new FileSystemEventHandler(OnChanged);
-                fsWatcher.EnableRaisingEvents = true;
+                    fsWatcher = new FileSystemWatcher
+                    {
+                        Path = Path.GetDirectoryName(txtFile.Text),
+                        Filter = Path.GetFileName(txtFile.Text),
+                        NotifyFilter = NotifyFilters.LastWrite
+                    };
+                    fsWatcher.Changed += new FileSystemEventHandler(OnChanged);
+                    fsWatcher.EnableRaisingEvents = true;
+                    lstNotification.Items.Clear();
+                    btnBrowseFile.Enabled = false;
+                    m_bIsWatching = true;
+                    btnWatchFile.BackColor = Color.Red;
+                    btnWatchFile.Text = "Stop";
+                    ReadFileAndMakeRequest();
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("File can't be read");
+                }
+
             }
             else
             {
@@ -96,7 +105,7 @@ namespace TitleSync
         {
             if (!m_bDirty)
             {
-                fullUrl = txEndpointUrl.Text + ReadFile(FileName);
+                fullUrl = txEndpointUrl.Text + ReadFile(FileName) + "&token=" + _token;
                 var response = MakeRequest(fullUrl);
                 m_Sb.Clear();
                 //m_Sb.Append(e.Name);
@@ -136,14 +145,7 @@ namespace TitleSync
 
             }
         }
-
-        private void WriteFile(string text, string fileName = "token.txt")
-        {
-
-            File.WriteAllText(Application.StartupPath.ToString() + "\\" + @fileName, text);
-
-        }
-
+        
         private string MakeRequest(string _fullUrl)
         {
             try
@@ -201,17 +203,23 @@ namespace TitleSync
         private void TokenToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string token = Prompt.ShowDialog("Insert Authentication Token", "");
-            WriteFile(token);
+            _token = token;
+            SetAppSetting("token", token);
 
         }
         private void SetAppSetting(string _setting, string _value)
         {
-            ConfigurationManager.AppSettings[_setting] = _value;
+            Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            configuration.AppSettings.Settings[_setting].Value = _value;
+            configuration.Save(ConfigurationSaveMode.Modified);
+            ConfigurationManager.RefreshSection("appSettings");
         }
+
         private string GetAppSetting(string _setting)
         {
             return ConfigurationManager.AppSettings[_setting];
         }
+
         private void TxtEndpointUrl_TextChanged(object sender, EventArgs e)
         {
             SetAppSetting("endpointUrl", txEndpointUrl.Text);
@@ -222,5 +230,7 @@ namespace TitleSync
             CheckForIllegalCrossThreadCalls = false;
 
         }
+
+
     }
 }

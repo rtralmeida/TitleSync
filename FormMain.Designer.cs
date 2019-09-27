@@ -44,11 +44,9 @@ namespace TitleSync
             this.lstNotification = new System.Windows.Forms.ListBox();
             this.txtFileContent = new System.Windows.Forms.RichTextBox();
             this.btnWatchFile = new System.Windows.Forms.Button();
-            this.lblFullUrl = new System.Windows.Forms.TextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tokenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -177,16 +175,6 @@ namespace TitleSync
             this.btnWatchFile.UseVisualStyleBackColor = false;
             this.btnWatchFile.Click += new System.EventHandler(this.BtnConnect_Click);
             // 
-            // lblFullUrl
-            // 
-            this.lblFullUrl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.lblFullUrl.Location = new System.Drawing.Point(48, 353);
-            this.lblFullUrl.Name = "lblFullUrl";
-            this.lblFullUrl.ReadOnly = true;
-            this.lblFullUrl.Size = new System.Drawing.Size(426, 26);
-            this.lblFullUrl.TabIndex = 2;
-            this.lblFullUrl.TabStop = false;
-            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -212,15 +200,9 @@ namespace TitleSync
             this.tokenToolStripMenuItem.Text = "Token";
             this.tokenToolStripMenuItem.Click += new System.EventHandler(this.TokenToolStripMenuItem_Click);
             // 
-            // imageList1
-            // 
-            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList1.Images.SetKeyName(0, "checkmark.ico");
-            this.imageList1.Images.SetKeyName(1, "close.ico");
-            // 
             // FormMain
             // 
+            this.AcceptButton = this.btnWatchFile;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(526, 721);
@@ -232,7 +214,6 @@ namespace TitleSync
             this.Controls.Add(this.materialLabel2);
             this.Controls.Add(this.btnBrowseFile);
             this.Controls.Add(this.txtFile);
-            this.Controls.Add(this.lblFullUrl);
             this.Controls.Add(this.txEndpointUrl);
             this.Controls.Add(this.label3);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -264,11 +245,9 @@ namespace TitleSync
         private System.Windows.Forms.ListBox lstNotification;
         private System.Windows.Forms.RichTextBox txtFileContent;
         private System.Windows.Forms.Button btnWatchFile;
-        private System.Windows.Forms.TextBox lblFullUrl;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tokenToolStripMenuItem;
-        private System.Windows.Forms.ImageList imageList1;
     }
 }
 
