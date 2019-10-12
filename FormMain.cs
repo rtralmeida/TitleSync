@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace TitleSync
 {
@@ -16,6 +17,7 @@ namespace TitleSync
         private bool m_bIsWatching;
         private string _fileName;
         private string _token;
+
 
         public string FileName
         {
@@ -30,12 +32,15 @@ namespace TitleSync
         public FormMain()
         {
             InitializeComponent();
+
+
             m_Sb = new StringBuilder();
             m_bDirty = false;
             m_bIsWatching = false;
             _token = GetAppSetting("token");
             txEndpointUrl.Text = GetAppSetting("endpointUrl");
             FileName = GetAppSetting("lastPathFile");
+
 
             txtFile.Text = FileName;
 
@@ -49,11 +54,13 @@ namespace TitleSync
             DialogResult resDialog = dlgOpenFile.ShowDialog();
             if (resDialog.ToString() == "OK")
             {
+
                 FileName = dlgOpenFile.FileName;
                 SetAppSetting("lastPathFile", FileName);
                 txtFile.Text = FileName;
                 txtFileContent.Clear();
                 txtFileContent.AppendText(ReadFile(FileName));
+
             }
         }
 
@@ -126,17 +133,26 @@ namespace TitleSync
         {
             try
             {
-                StringBuilder content = new StringBuilder();
-                using (var fs = new FileStream(_fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                using (var reader = new StreamReader(fs))
-                {
-                    string line;
-                    while ((line = reader.ReadLine()) != null)
-                    {
-                        content.Append(line);
-                    }
-                }
-                return content.ToString();
+
+                XmlDocument xDoc = new XmlDocument();
+
+                xDoc.Load(FileName);
+
+                var artist = xDoc.SelectNodes("/Playlist/OnAir/CurMusic/Artist");
+                var title = xDoc.SelectNodes("/Playlist/OnAir/CurMusic/Title");
+
+                return artist[0].InnerText + " - " + title[0].InnerText;
+                //StringBuilder content = new StringBuilder();
+                //using (var fs = new FileStream(_fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                //using (var reader = new StreamReader(fs))
+                //{
+                //    string line;
+                //    while ((line = reader.ReadLine()) != null)
+                //    {
+                //        content.Append(line);
+                //    }
+                //}
+                //return content.ToString();
 
             }
             catch (Exception ex)
@@ -145,7 +161,7 @@ namespace TitleSync
 
             }
         }
-        
+
         private string MakeRequest(string _fullUrl)
         {
             try

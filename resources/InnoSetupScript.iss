@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "TitleSync"
-#define MyAppVersion "1"
+#define MyAppVersion "2"
 #define MyAppPublisher "Rui Almeida"
 #define MyAppURL "http://ruialmeida.me"
 #define MyAppExeName "TitleSync.exe"
